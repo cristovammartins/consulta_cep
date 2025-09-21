@@ -1,0 +1,52 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Consulta CEP</title>
+  </head>
+  <body>
+    <input id="campo_cep" type="number" placeholder="CEP" />
+    <button onclick="procurarCEP()">Pesquisar</button>
+
+    <br />
+    <br />
+    <br />
+
+    <span id="resultado">Consulte o CEP</span>
+  </body>
+
+  <script>
+    const resultado = document.getElementById("resultado");
+    const cep = document.getElementById("campo_cep");
+
+    const procurarCEP = () => {
+      clearResultado();
+
+      const url = `https://viacep.com.br/ws/${cep.value}/json/`;
+
+      fetch(url)
+        .then((res) => res.json())
+        .then((res) => {
+          if (res.erro) throw new Error();
+          resultado.innerText = montarEndereco(res);
+        })
+        .catch((error) => errorResultado());
+    };
+
+    const montarEndereco = (dados) => {
+      let endereco = "";
+
+      endereco += `Rua/Av: ${dados.logradouro} \n`;
+      endereco += `Complemento: ${dados.complemento} \n`;
+      endereco += `Bairro: ${dados.bairro} \n`;
+      endereco += `Cidade: ${dados.localidade} \n`;
+      endereco += `UF: ${dados.uf} \n`;
+
+      return endereco;
+    };
+
+    const clearResultado = () => (resultado.innerText = "Consulte o CEP");
+
+    const errorResultado = () => (resultado.innerText = "CEP não foi encontrado!");
+  </script>
+</html>
